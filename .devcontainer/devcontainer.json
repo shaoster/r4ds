@@ -5,13 +5,10 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "ghcr.io/rocker-org/devcontainer/tidyverse:4",
 
-	// Mount the host cache directory into the container
-	// IMPORTANT: Make sure this cache directory exists on the host machine.
-	"mounts": [
-		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
-	],
-
+	// Ensure the package cache directory on the host machine exists.
+	"preCreateCommand": "mkdir -p ${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache",
 	// Set environment variables inside the container to use the mounted cache
+
 	"containerEnv": {
 		"RENV_PATHS_CACHE": "/renv/cache"
 	},
