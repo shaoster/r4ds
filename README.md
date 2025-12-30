@@ -10,9 +10,9 @@ Each R file represents one chapter (e.g. `1.R` is `1 Data visualization`).
 There's a couple of magical things happening here so we have a portable and reproducible setup.
 
 1. The environment is built on top of the docker container found at https://hub.docker.com/r/rocker/tidyverse.
-   The configurations for the container build in vscode live in .devcontainer/devcontainer.json and those configurations
+   The configurations for the container build, within vscode, can be found in .devcontainer/devcontainer.json and those configurations
 
-    - Mounts the R package cache to a host directory so environment setups don't take forever after the first time,
+    - Mount the R package cache to a host directory so environment setups don't take forever after the first time,
       which can easily take more than 10 minutes.
 
     - Install some additional OS packages into the docker container that are dependencies of used R packages.
