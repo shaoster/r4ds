@@ -1,0 +1,19 @@
+#!/bin/sh
+spinner()
+{
+    local pid=$!
+    local delay=0.75
+    local spinstr='|/-\'
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
+    printf "    \b\b\b\b"
+}
+echo "Checking renv for consistency..."
+RENV_CONFIG_SANDBOX_ENABLED=FALSE
+Rscript -e "if (length(renv::status()\$problems) > 0) stop('renv status check failed: project is out of sync')" &
+spinner
