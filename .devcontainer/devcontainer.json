@@ -14,14 +14,9 @@
 	},
 
 	// Mount the host cache directory into the container
-  "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
-  ],
-
-  // Set environment variables inside the container to use the mounted cache
-  "containerEnv": {
-    "RENV_PATHS_CACHE": "/renv/cache"
-  },
+	"mounts": [
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
+	],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
