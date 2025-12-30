@@ -14,6 +14,5 @@ spinner()
     printf "    \b\b\b\b"
 }
 echo "Checking renv for consistency..."
-RENV_CONFIG_SANDBOX_ENABLED=FALSE
 Rscript -e "if (length(renv::status()\$problems) > 0) stop('renv status check failed: project is out of sync')" &
 spinner

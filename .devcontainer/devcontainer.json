@@ -11,10 +11,20 @@
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
 	],
 
-  	// Set environment variables inside the container to use the mounted cache
+	// Set environment variables inside the container to use the mounted cache
 	"containerEnv": {
 		"RENV_PATHS_CACHE": "/renv/cache"
 	},
+
+	// Mount the host cache directory into the container
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
+  ],
+
+  // Set environment variables inside the container to use the mounted cache
+  "containerEnv": {
+    "RENV_PATHS_CACHE": "/renv/cache"
+  },
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
