@@ -6,7 +6,7 @@ library(plotly)
 glimpse(penguins)
 plot <- ggplot(
   data = penguins,
-  mapping = aes(x = flipper_len, y = body_mass)
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
 ) +
   geom_point(mapping = aes(color = species, shape = species)) +
   geom_smooth(method = "lm") +

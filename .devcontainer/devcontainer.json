@@ -6,14 +6,15 @@
 	"image": "ghcr.io/rocker-org/devcontainer/tidyverse:4",
 
 	// Mount the host cache directory into the container
-  "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
-  ],
+	// IMPORTANT: Make sure this cache directory exists on the host machine.
+	"mounts": [
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/renv/cache,target=/renv/cache,type=bind,consistency=cached"
+	],
 
-  // Set environment variables inside the container to use the mounted cache
-  "containerEnv": {
-    "RENV_PATHS_CACHE": "/renv/cache"
-  },
+  	// Set environment variables inside the container to use the mounted cache
+	"containerEnv": {
+		"RENV_PATHS_CACHE": "/renv/cache"
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -22,7 +23,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends xdg-utils && sudo rm -rf /var/lib/apt/lists/* && R -e 'renv::restore()' && git config core.hooksPath .hooks"
+	"postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
