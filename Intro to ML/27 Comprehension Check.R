@@ -113,3 +113,137 @@ plot <- dat %>%
     summarize(y = mean(y), x =mean(x)) %>%
     qplot(x,y,data =.)
 ggplotly(plot)
+
+# 27.8 
+data("mnist_27")
+
+plot <- mnist_27$train %>%
+    ggplot(aes(x_1, x_2, color = y)) + geom_point()
+
+ggplotly(plot)
+
+# linear regression
+fit <- mnist_27$train %>%
+    mutate(y = ifelse(y==7, 1, 0)) %>%
+    lm(y ~ x_1 + x_2, data = .)
+
+p_hat <- predict(fit, newdata = mnist_27$test, type = "response") #probability
+y_hat <- factor(ifelse(p_hat > 0.5, 7, 2))
+
+cm <- confusionMatrix(y_hat,mnist_27$test$y)
+
+#plot the true values
+plot <- mnist_27$true_p %>%
+    ggplot(aes(x_1, x_2, z=p, fill = p)) +
+    geom_raster() +
+    scale_fill_gradientn(colors = c("#F8766D", "white", "00BFC4")) +
+    stat_contour(breaks=c(0.5), color ="black")
+ggplotly(plot)    
+
+
+#linear regression comprehension check
+set.seed(1)
+n <- 100
+Sigma <- 9*matrix(c(1.0,0.5,0.5,1.0),2,2)
+dat <- MASS::mvrnorm(n, c(69,69), Sigma) %>%
+        data.frame() %>%
+        setNames(c("x", "y"))
+
+
+my_partition <- function() {
+    test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+    test <- dat[test_index,]
+    train <- dat[-test_index,]
+
+    fit <- train %>%
+        lm(y ~ x, data = .)
+    y_hat <- predict(fit, newdata = test, type = "response")
+    
+    rmse(test$y, y_hat)
+}
+set.seed(1)
+list_of_rmses <- replicate(100, my_partition())
+mean(list_of_rmses)
+sd(list_of_rmses)
+
+# Generic
+runsim <- function(n) {
+    Sigma <- 9*matrix(c(1.0,0.5,0.5,1.0),2,2)
+    dat <- MASS::mvrnorm(n, c(69,69), Sigma) %>%
+        data.frame() %>%
+        setNames(c("x", "y"))
+    rmses <- replicate(100, {
+        test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+        test <- dat[test_index,]
+        train <- dat[-test_index,]
+
+        fit <- train %>%
+            lm(y ~ x, data = .)
+        y_hat <- predict(fit, newdata = test, type = "response")
+        
+        rmse(test$y, y_hat)
+    })
+    c(mean(rmses), sd(rmses))
+}
+n <- c(100, 500, 1000, 5000, 10000)
+set.seed(1)
+sapply(n, runsim)
+
+# With higher correlation
+set.seed(1)
+n <- 100
+Sigma <- 9*matrix(c(1.0,0.95,0.95,1.0),2,2)
+dat <- MASS::mvrnorm(n, c(69,69), Sigma) %>%
+        data.frame() %>%
+        setNames(c("x", "y"))
+
+
+my_partition <- function() {
+    test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+    test <- dat[test_index,]
+    train <- dat[-test_index,]
+
+    fit <- train %>%
+        lm(y ~ x, data = .)
+    y_hat <- predict(fit, newdata = test, type = "response")
+    
+    rmse(test$y, y_hat)
+}
+set.seed(1)
+list_of_rmses <- replicate(100, my_partition())
+mean(list_of_rmses)
+sd(list_of_rmses)
+
+#with two features
+set.seed(1)
+n <- 100
+Sigma <- 9*matrix(c(1.0,0.75,0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0),3,3)
+dat <- MASS::mvrnorm(n, c(0,0,0), Sigma) %>%
+        data.frame() %>%
+        setNames(c("y", "x_1", "x_2"))
+
+set.seed(1)
+test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+test <- dat[test_index,]
+train <- dat[-test_index,]
+
+test <- dat %>% slice(test_index)
+train <- dat %>% slice(-test_index)
+
+fit_x1 <- train %>%
+    lm(y ~ x_1, data = .)
+y_hat_x1 <- predict(fit_x1, newdata = test, type = "response")
+
+fit_x2 <- train %>%
+    lm(y ~ x_2, data = .)
+y_hat_x2 <- predict(fit_x2, newdata = test, type = "response")
+
+fit_both <- train %>%
+    lm(y ~ x_1 + x_2, data = .)
+y_hat_both <- predict(fit_both, newdata = test, type = "response")
+
+rmse(test$y, y_hat_both)
+rmse(test$y, y_hat_x1)
+rmse(test$y, y_hat_x2)
+
+sqrt(mean((y_hat_both - test$y)^2))
