@@ -1,7 +1,7 @@
 #!/bin/sh
 sudo apt-get update
 # Interactive plots require xdg
-sudo apt-get install -y --no-install-recommends xdg-utils
+sudo apt-get install -y --no-install-recommends xdg-utils libpoppler-cpp-dev
 sudo rm -rf /var/lib/apt/lists/*
 # Set up the renv
 R -e 'install.packages("renv");renv::restore()'

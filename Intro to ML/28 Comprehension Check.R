@@ -1,0 +1,11 @@
+library(dslabs)
+library(dplyr)
+library(lubridate)
+library(purrr)
+library(caret)
+library(tidyverse)
+library(plotly)
+library(pdftools)
+
+fn <- system.file("extdata","RD-Mortality-Report_2015-18-180531.pdf", package="dslabs")
+textformat <- pdf_text(fn)

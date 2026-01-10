@@ -62,5 +62,24 @@ ggplotly(plot)
 plot <- polls_2008 %>% 
     ggplot(aes(day, margin)) +
     geom_point() +
-    geom_smooth(color = "red", span =0.3, method = "loess", method.arg = list(degree=1), se=FALSE)
+    geom_smooth(color = "red", span =0.2, method = "loess", method.arg = list(degree=1), se=FALSE)
+ggplotly(plot)
+
+total_days <- diff(range(polls_2008$day))
+span <- 28/total_days
+fit_1 <- loess(margin ~ day, degree = 1, span=span, data = polls_2008)
+fit_2 <- loess(margin ~ day, span=span, data=polls_2008)
+
+plot <- polls_2008 %>%
+    mutate(smooth_1 = fit_1$fitted, smooth_2 = fit_2$fitted) %>%
+    ggplot(aes(day, margin)) +
+    geom_point(size=3, alpha=0.5, color ="grey") +
+    geom_line(aes(day, smooth_1), color="red", lty =2) + #line style
+    geom_line(aes(day, smooth_2), color="orange", lty =1)
+ggplotly(plot)
+
+plot <- polls_2008 %>%
+    ggplot(aes(day, margin)) +
+    geom_point()+
+    geom_smooth()
 ggplotly(plot)
