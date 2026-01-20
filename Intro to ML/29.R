@@ -2,6 +2,7 @@ library(dslabs)
 library(tidyverse)
 library(plotly)
 library(caret)
+library(dplyr)
 
 data("mnist_27")
 
@@ -26,3 +27,16 @@ cm_2 <- confusionMatrix(y_hat_knn_2, mnist_27$test$y)
 knn_fit_401 <- knn3(y ~ x_1 + x_2, data=mnist_27$train, k=401)
 y_hat_knn_401 <- predict(knn_fit_401, mnist_27$test, type = "class")
 cm <- confusionMatrix(y_hat_knn_401, mnist_27$test$y)
+
+#Bootstrap
+set.seed(1995)
+indexes <- createResample(mnist_27$train$y, 10)
+
+count_digits <- function(sample) {
+count_3 <- sum(sample == 3)
+count_4 <- sum(sample == 4)
+count_7 <- sum(sample == 7)
+c(count_3, count_4, count_7)
+}
+
+lapply(indexes, count_digits)

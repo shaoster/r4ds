@@ -53,3 +53,46 @@ k[best_index]
     knn_fit <- knn3(y ~ ., data=train_set, k=3)
     y_hat_knn <- predict(knn_fit, test_set, type = "class")
     confusionMatrix(data=y_hat_knn, reference=test_set$y)$overall["Accuracy"]
+
+
+#Bootstrap
+library(dslabs)
+library(caret)
+set.seed(1995)
+indexes <- createResample(mnist_27$train$y, 10)
+
+count_digits <- function(sample) {
+    count_3 <- sum(sample == 3)
+    count_4 <- sum(sample == 4)
+    count_7 <- sum(sample == 7)
+    c(count_3, count_4, count_7)
+}
+
+sum_by_element <- function(a, b) { Map("+", a, b) }
+
+across_sample <- lapply(indexes, count_digits)
+
+totals = Reduce(sum_by_element, across_sample)
+
+#Q3
+set.seed(1)
+B <- 10^4
+M <- replicate(B, {
+    y <- rnorm(100,0,1)
+    quantile(y, 0.75)
+})
+
+mean(M)
+std_error <- sd(M) / sqrt(length(M))
+
+set.seed(1)
+p <- rnorm(100,0,1)
+B <- 10^4
+
+M <- replicate(B, {
+    y <- sample(p,100, replace = TRUE)
+    quantile(y, 0.75)
+})
+
+mean(M)
+std_error <- sd(M) / sqrt(length(M))
