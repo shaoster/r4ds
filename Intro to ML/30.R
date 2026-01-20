@@ -2,6 +2,7 @@ library(dslabs)
 library(caret)
 library(tidyverse)
 library(plotly)
+library(gam)
 
 data("mnist_27")
 train_glm <- train(y ~ ., method = "glm", data = mnist_27$train)
@@ -51,8 +52,22 @@ plot_cond_prob <- function(p_hat = NULL) {
         geom_raster(show.legend = FALSE) +
         scale_fill_gradientn(colors = c("#F8766D","white","#00BFC4")) +
         stat_contour(breaks = c(0.5), color = "black")
-    ggplotly(plot)
+    ggplotly(plot, hoverinfo = 'none')
 }
 
 predict_knn <- predict(train_knn, mnist_27$true_p, type = "prob")
 plot_cond_prob(predict_knn[,2])
+ 
+ #Loess
+modelLookup("gamLoess")
+grid <- expand.grid(span = seq(0.15, 0.65, len=10), degree = 1)
+
+train_loess <- train(y ~ ., method = "gamLoess", data = mnist_27$train, tuneGrid = grid)
+plot <- ggplot(train_loess, highlight=TRUE)
+ggplotly(plot)
+
+predict_loess <- predict(train_loess, newdata = mnist_27$test, type = "raw")
+cm_loess <- confusionMatrix(data=predict_loess, reference = mnist_27$test$y)
+
+predict_loess_p <- predict(train_loess, mnist_27$true_p, type = "prob")
+plot_cond_prob(predict_loess_p[,2])
