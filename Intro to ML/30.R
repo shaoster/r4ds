@@ -51,7 +51,7 @@ plot_cond_prob <- function(p_hat = NULL) {
         geom_raster(show.legend = FALSE) +
         scale_fill_gradientn(colors = c("#F8766D","white","#00BFC4")) +
         stat_contour(breaks = c(0.5), color = "black")
-    plot
+    ggplotly(plot)
 }
 
 predict_knn <- predict(train_knn, mnist_27$true_p, type = "prob")
